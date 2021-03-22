@@ -1,0 +1,28 @@
+diff --git a/modules/jrCore/lib/datastore.php b/modules/jrCore/lib/datastore.php
+index d9e99a4..6317a48 100644
+--- a/modules/jrCore/lib/datastore.php
++++ b/modules/jrCore/lib/datastore.php
+@@ -3820,7 +3820,7 @@ function _jrCore_db_search_items($module, $_params)
+         // If we are optimizing our pagebreak we switch to simplepagebreak at the simplepagebreak_cutoff
+         if ($optimized_limit == 'on' && isset($_params['pagebreak']) && jrCore_checktype($_params['pagebreak'], 'number_nz')) {
+             $nr = jrCore_db_get_ds_row_count($module);
+-            $mr = (isset($_params['simplepagebreak_cutoff'])) ? (int) $_params['simplepagebreak_cutoff'] : (isset($_conf['jrCore_simplepagebreak_cutoff'])) ? (int) $_conf['jrCore_simplepagebreak_cutoff'] : 50000;
++            $mr = (isset($_params['simplepagebreak_cutoff'])) ? (int) $_params['simplepagebreak_cutoff'] : ( (isset($_conf['jrCore_simplepagebreak_cutoff'])) ? (int) $_conf['jrCore_simplepagebreak_cutoff'] : 50000 );
+             if ($nr > $mr) {
+                 $_params['simplepagebreak'] = (int) $_params['pagebreak'];
+                 unset($_params['pagebreak']);
+diff --git a/modules/jrGraph/include.php b/modules/jrGraph/include.php
+index dccc72a..571d3e5 100644
+--- a/modules/jrGraph/include.php
++++ b/modules/jrGraph/include.php
+@@ -223,8 +223,8 @@ function jrGraph_generate($module, $name, $params = null)
+         'yaxis'     => (isset($_dt['yaxis']) && is_array($_dt['yaxis'])) ? $_dt['yaxis'] : array(),
+         'precision' => (isset($_dt['precision'])) ? intval($_dt['precision']) : 3,
+         'unique_id' => 't' . jrCore_create_unique_string(6),
+-        'height'    => (isset($_dt['height'])) ? $_dt['height'] : (isset($params['height'])) ? $params['height'] : '350px',
+-        'width'     => (isset($_dt['width'])) ? $_dt['width'] : (isset($params['width'])) ? $params['width'] : '100%',
++        'height'    => (isset($_dt['height'])) ? $_dt['height'] : ( (isset($params['height'])) ? $params['height'] : '350px' ) ,
++        'width'     => (isset($_dt['width'])) ? $_dt['width'] : ( (isset($params['width'])) ? $params['width'] : '100%' ) ,
+         'days'      => (isset($_dt['days']) && jrCore_checktype($_dt['days'], 'number_nz')) ? intval($_dt['days']) : $params['days']
+     );
+     if (isset($_dt['_sets']) && is_array($_dt['_sets'])) {
