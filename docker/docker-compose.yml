@@ -10,29 +10,26 @@ services:
     - /srv/volumes/mariadb/data:/var/lib/mysql:Z
     - /srv/volumes/mariadb/conf.d/innodb_tweaks.conf:/etc/mysql/conf.d/innodb_tweaks.cnf:ro,Z
     environment:
-    - MYSQL_ROOT_PASSWORD=your_root_password_here
-    - MYSQL_PASSWORD=genosis_user_password_here
+    - MYSQL_ROOT_PASSWORD=ooGh6eesohzing6eiGaeSoy5
+    - MYSQL_PASSWORD=aedeeshoQuot6yeisheeng8u
     - MYSQL_DATABASE=genosis
     - MYSQL_USER=genosis
     - MYSQL_HOST=127.0.0.1
   app:
-    image: php:5-fpm
+    image: localhost/stremki/genosis:8.1-fpm-alpine3.19
     restart: always
     network_mode: host
     volumes:
-    - /srv/volumes/genosis/app:/var/www:Z
-    - /srv/volumes/genosis/config:/var/www/data/config:ro,Z
-    - /srv/volumes/genosis/fpm/zz.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro,Z
-    - /srv/volumes/genosis/fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro,Z
-    - /srv/volumes/genosis/fpm/extensions:/usr/local/lib/php/extensions/precompiled:Z
-    - /srv/volumes/genosis/fpm/entrypoint.php5.sh:/entrypoint.sh:ro,Z
+    # - /srv/volumes/genosis/app:/var/www:Z
+    # - /srv/volumes/genosis/config:/var/www/data/config:ro,Z
     - /srv/volumes/genosis/logs/php:/var/log/php:Z
-    entrypoint: [ "/entrypoint.sh" ]
+    entrypoint: ['tail', '-f', '/dev/null']
   web:
     image: nginx:alpine
     restart: always
     network_mode: host
     volumes:
-    - /srv/volumes/genosis/app:/var/www
-    - /srv/volumes/genosis/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    - /srv/volumes/genosis/app:/var/www:ro,Z
+    - /srv/volumes/genosis/nginx.conf:/etc/nginx/conf.d/default.conf:ro,Z
+    - /srv/volumes/genosis/noexec.sh:/docker-entrypoint.d/10-listen-on-ipv6-by-default.sh:ro,Z
     - /srv/volumes/genosis/logs/nginx:/var/log/nginx:Z

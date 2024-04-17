@@ -15,3 +15,8 @@ Here you can find **docker-compose.yml** for building microservices stack to run
     ./docker/innodb_tweaks.conf - conf.d file for mariadb to tune jamroom mysql connections
     ./docker/logs - forlder to store nginx and php output
     ./docker/nginx.conf - nginx core config for php-fpm
+
+**build**
+
+    # Fetch zip from: https://www.jamroom.net/genosis/documentation/getting-started/1746/installing-genosis
+    PHP_VER=8.1-fpm-alpine3.19 ./bin/build.sh 
