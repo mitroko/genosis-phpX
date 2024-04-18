@@ -1,0 +1,21 @@
+ARG NGINX_VER
+ENV NGINX_VER=$(NGINX_VER:-mainline-alpine}
+
+FROM docker.io/library/nginx:$NGINX_VER as build
+MAINTAINER "Dzmitry Stremkouski <mitroko@gmail.com>"
+
+ARG JAMROOM_VER
+ENV JAMROOM_VER=${JAMROOM_VER:-7.0.0}
+WORKDIR /tmp
+RUN mkdir -p /tmp/static
+COPY src/genosis-open-source-$JAMROOM_VER.zip /tmp/static
+RUN cd /tmp/static && unzip genosis-open-source-$JAMROOM_VER.zip
+RUN find /tmp/static/genosis-open-source -type f -not \( -iname *.LICENSE -o -iname *.png -o -iname *.gif -o -iname *.jpg -o -iname *.css -o -iname *.html -o -iname *.txt -o -iname *.js -o -iname *.svg -o -iname *.ico -o -iname *.json -o -name LICENSE -o -iname *.md -o -iname *.markdown \) -delete
+ 
+FROM docker.io/library/nginx:$NGINX_VER as localhost/stremki/genosis_web:$NGINX_VER
+MAINTAINER "Dzmitry Stremkouski <mitroko@gmail.com>"
+ENV JAMROOM_VER=${JAMROOM_VER}
+ENV NGINX_VER=${NGINX_VER}
+COPY --from=build /tmp/static/genosis-open-source /var/www
+RUN rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+COPY nginx.conf /etc/nginx/conf.d/default.conf

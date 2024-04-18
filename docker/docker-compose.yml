@@ -10,26 +10,29 @@ services:
     - /srv/volumes/mariadb/data:/var/lib/mysql:Z
     - /srv/volumes/mariadb/conf.d/innodb_tweaks.conf:/etc/mysql/conf.d/innodb_tweaks.cnf:ro,Z
     environment:
-    - MYSQL_ROOT_PASSWORD=ooGh6eesohzing6eiGaeSoy5
-    - MYSQL_PASSWORD=aedeeshoQuot6yeisheeng8u
+    - MYSQL_ROOT_PASSWORD=mysql_root_password_here
+    - MYSQL_PASSWORD=mysql_genosis_password_here
     - MYSQL_DATABASE=genosis
     - MYSQL_USER=genosis
     - MYSQL_HOST=127.0.0.1
   app:
-    image: localhost/stremki/genosis:8.1-fpm-alpine3.19
+    image: localhost/stremki/genosis_app:8.1-fpm-alpine3.19
     restart: always
     network_mode: host
     volumes:
-    # - /srv/volumes/genosis/app:/var/www:Z
-    # - /srv/volumes/genosis/config:/var/www/data/config:ro,Z
+    - /srv/volumes/genosis/logs/app:/var/www/data/logs:Z
+    - /srv/volumes/genosis/config:/var/www/data/config:Z
+    - /srv/volumes/genosis/cache:/var/www/data/cache:Z
+    - /srv/volumes/genosis/media:/var/www/data/media:z
     - /srv/volumes/genosis/logs/php:/var/log/php:Z
-    entrypoint: ['tail', '-f', '/dev/null']
+    # entrypoint: ["tail", "-f", "/dev/null"]
   web:
-    image: nginx:alpine
+    image: localhost/stremki/genosis_web:mainline-alpine3.19
     restart: always
     network_mode: host
+    depends_on:
+    - app
     volumes:
-    - /srv/volumes/genosis/app:/var/www:ro,Z
+    - /srv/volumes/genosis/media:/var/www/data/media:ro,z
     - /srv/volumes/genosis/nginx.conf:/etc/nginx/conf.d/default.conf:ro,Z
-    - /srv/volumes/genosis/noexec.sh:/docker-entrypoint.d/10-listen-on-ipv6-by-default.sh:ro,Z
     - /srv/volumes/genosis/logs/nginx:/var/log/nginx:Z
